@@ -1,65 +1,323 @@
-import Image from "next/image";
+"use client";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
+  const [lines, setLines] = useState<any[]>([]);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  // 🔥 NOVOS STATES (backend)
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+
+    const generated = [...Array(20)].map(() => ({
+      x1: Math.random() * 100 + "%",
+      y1: Math.random() * 100 + "%",
+      x2: Math.random() * 100 + "%",
+      y2: Math.random() * 100 + "%",
+    }));
+
+    setLines(generated);
+
+    // 🔥 FETCH DO BACKEND
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/api/projects");
+        const data = await res.json();
+        setProjects(data);
+      } catch (err) {
+        console.error("Erro ao buscar projetos:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 🔥 NAVBAR ATIVA AUTOMÁTICA
+  useEffect(() => {
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // 🔥 SCROLL PROFISSIONAL
+  function scrollToSection(sectionId: string): void {
+    setActiveSection(sectionId);
+
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    window.scrollTo({
+      top: element.offsetTop - 80,
+      behavior: "smooth",
+    });
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+        <svg className="w-full h-full">
+          <defs>
+            <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#8b5cf6" />
+              <stop offset="100%" stopColor="#3b82f6" />
+            </linearGradient>
+          </defs>
+
+          {lines.map((line, i) => (
+            <motion.line
+              key={i}
+              x1={line.x1}
+              y1={line.y1}
+              x2={line.x2}
+              y2={line.y2}
+              stroke="url(#lineGradient)"
+              strokeWidth="1.1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.6, 0] }}
+              transition={{ duration: 6, repeat: Infinity, delay: i * 0.3 }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
+        </svg>
+      </div>
+
+      {/* NAVBAR */}
+      <motion.nav
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        className={`fixed w-full z-50 transition-all ${scrolled
+          ? "bg-black/60 backdrop-blur-xl border-b border-white/10 shadow-lg"
+          : "bg-transparent"
+          }`}
+      >
+        <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+
+          <h1 className="font-bold text-lg tracking-wide">
+            <span
+              onClick={() => scrollToSection("home")}
+              className={`cursor-pointer transition ${activeSection === "home"
+                ? "text-purple-400"
+                : "hover:text-gray-400"
+                }`}
+            >
+              Becker.dev
+            </span>
+          </h1>
+
+          <div className="flex gap-6 items-center">
+            <span
+              onClick={() => scrollToSection("projects")}
+              className={`cursor-pointer transition ${activeSection === "projects"
+                ? "text-purple-400"
+                : "hover:text-gray-400"
+                }`}
+            >
+              Projetos
+            </span>
+
+            <span
+              onClick={() => scrollToSection("about")}
+              className={`cursor-pointer transition ${activeSection === "about"
+                ? "text-purple-400"
+                : "hover:text-gray-400"
+                }`}
+            >
+              Sobre
+            </span>
+
+            <a href="https://github.com/vg-becker" target="_blank">
+              <FaGithub className="hover:scale-125 transition hover:text-purple-400" />
+            </a>
+
+            <a href="https://www.linkedin.com/in/vitor-gabriel-becker-02972a16b/" target="_blank">
+              <FaLinkedin className="hover:scale-125 transition hover:text-blue-400" />
+            </a>
+            {!session ? (
+              <button
+                onClick={() => signIn("github")}
+                className="text-sm px-4 py-2 border border-white/20 rounded-lg hover:bg-white hover:text-black transition"
+              >
+                Login
+              </button>
+            ) : (
+              <a
+                href="/admin"
+                className="text-sm px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition"
+              >
+                Admin
+              </a>
+            )}
+          </div>
         </div>
-      </main>
-    </div>
+      </motion.nav>
+
+      {/* HERO */}
+      <section id="home" className="flex flex-col items-center justify-center h-screen text-center px-6">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-6xl font-bold"
+        >
+          Vitor Gabriel P. Becker
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-4 text-gray-400 max-w-xl"
+        >
+          Desenvolvedor focado em soluções modernas, escaláveis e orientadas a resultado.
+        </motion.p>
+
+        <div className="mt-8 flex gap-4">
+          <button
+            onClick={() => scrollToSection("projects")}
+            className="px-6 py-3 rounded-2xl bg-purple-500 hover:bg-purple-600 transition hover:scale-105"
+          >
+            Ver Projetos
+          </button>
+
+          <button
+            onClick={() => scrollToSection("about")}
+            className="px-6 py-3 rounded-2xl border hover:bg-white hover:text-black transition hover:scale-105"
+          >
+            Sobre mim
+          </button>
+        </div>
+      </section>
+
+      {/* PROJETOS */}
+      <section id="projects" className="px-6 py-20 max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold mb-10">Projetos</h2>
+
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-40 bg-zinc-800 animate-pulse rounded-2xl" />
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
+          <p className="text-gray-500">Nenhum projeto cadastrado.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project) => (
+              <motion.div
+                key={project.id}
+                whileHover={{ scale: 1.04 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="group relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-lg hover:shadow-purple-500/20 hover:-translate-y-1 transition-all duration-300"
+                >
+
+                {/* 🖼️ IMAGEM */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={project.imageUrl || "https://via.placeholder.com/400x200"}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+
+                  {/* 🔥 OVERLAY */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+                </div>
+
+                {/* 📦 CONTEÚDO */}
+                <div className="p-5 relative z-10">
+                  <h3 className="text-xl font-semibold group-hover:text-purple-400 transition">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-gray-400 mt-2 text-sm line-clamp-3">
+                    {project.description}
+                  </p>
+
+                  {/* 🧠 TECHS */}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {project.techs.split(",").map((tech: string, i: number) => (
+                      <span
+                        key={i}
+                        className="text-xs px-2 py-1 bg-zinc-800 rounded-lg border border-zinc-700"
+                      >
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* 🔗 BOTÕES */}
+                  <div className="flex gap-3 mt-5">
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      className="text-sm px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition"
+                    >
+                      GitHub
+                    </a>
+
+                    <a
+                      href={project.live}
+                      target="_blank"
+                      className="text-sm px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 transition"
+                    >
+                      Demo
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* SOBRE */}
+      <section id="about" className="px-6 py-20 bg-zinc-950/80 backdrop-blur text-center">
+        <h2 className="text-3xl font-bold mb-6">Sobre mim</h2>
+        <p className="text-gray-400 max-w-xl mx-auto">
+          Sou desenvolvedor apaixonado por tecnologia, focado em criar soluções eficientes e modernas.
+        </p>
+      </section>
+
+      {/* ADS */}
+      <section className="px-6 py-20">
+        <div className="max-w-5xl mx-auto border border-zinc-800 rounded-2xl p-6 text-center bg-zinc-900/50">
+          <p className="text-gray-400 mb-2">Parcerias & Publicidade</p>
+          <div className="h-32 flex items-center justify-center text-gray-500">
+            Espaço para Ads / SaaS / Produtos
+          </div>
+        </div>
+      </section>
+
+      <footer className="text-center py-10 text-gray-500 text-sm">
+        © {new Date().getFullYear()} Vitor Gabriel
+      </footer>
+    </main>
   );
 }
