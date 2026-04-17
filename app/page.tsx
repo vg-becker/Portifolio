@@ -304,7 +304,7 @@ export default function Home() {
     {/* FOTO */}
     <div className="relative">
       <img
-        src="C:\Users\gvito\OneDrive\Documentos\repositorios\new_project\portfolio\public\imagem_projeto.png"
+        src="portfolio\public\imagem_projeto.png"
         alt="Foto ilustrativa desenvolvedor"
         className="w-48 h-48 md:w-64 md:h-64 rounded-2xl object-cover shadow-xl border border-zinc-800"
       />
