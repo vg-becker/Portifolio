@@ -1,43 +1,24 @@
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextRequest } from "next/server";
 
-// 🔍 GET por ID
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-
-    const project = await prisma.project.findUnique({
-      where: { id: Number(id) },
-    });
-
-    return Response.json(project);
-  } catch (error) {
-    console.error("GET ERROR:", error);
-    return new Response("Erro ao buscar projeto", { status: 500 });
-  }
-}
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // ✏️ UPDATE
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   try {
-    const { id } = await params;
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const { id } = await context.params;
     const body = await req.json();
 
     const updated = await prisma.project.update({
@@ -47,7 +28,7 @@ export async function PUT(
 
     return Response.json(updated);
   } catch (error) {
-    console.error("UPDATE ERROR:", error);
+    console.error("PUT ERROR:", error);
     return new Response("Erro ao atualizar", { status: 500 });
   }
 }
@@ -55,16 +36,16 @@ export async function PUT(
 // ❌ DELETE
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   try {
-    const { id } = await params;
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const { id } = await context.params;
 
     await prisma.project.delete({
       where: { id: Number(id) },
