@@ -301,7 +301,11 @@ export default function Home() {
       <section id="about" className="px-6 py-20 bg-zinc-950/80 backdrop-blur text-center">
         <h2 className="text-3xl font-bold mb-6">Sobre mim</h2>
         <p className="text-gray-400 max-w-xl mx-auto">
-          Sou desenvolvedor apaixonado por tecnologia, focado em criar soluções eficientes e modernas.
+          Sou um profissional da tecnologia apaixonado por resolver problemas com código e dados. Atuo como desenvolvedor Full-Stack, com foco em front-end (HTML, CSS, JavaScript) e sólida experiência em back-end com Java, Spring Boot, Maven, MySQL e SQL Server. Entrego aplicações completas, escaláveis e centradas na experiência do usuário.  
+          
+          Além do desenvolvimento de sistemas, tenho forte atuação em análise exploratória de dados e indicadores de desempenho (KPI's), utilizando ferramentas como Excel, SQL, Python e Power BI. Transformo dados em insights estratégicos por meio de dashboards e relatórios claros e objetivos.  
+          
+          Tenho um perfil analítico, comprometido com resultados e acostumado a trabalhar em ambientes ágeis e orientados a performance.
         </p>
       </section>
 
