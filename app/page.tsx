@@ -298,16 +298,54 @@ export default function Home() {
       </section>
 
       {/* SOBRE */}
-      <section id="about" className="px-6 py-20 bg-zinc-950/80 backdrop-blur text-center">
-        <h2 className="text-3xl font-bold mb-6">Sobre mim</h2>
-        <p className="text-gray-400 max-w-xl mx-auto">
-          Sou um profissional da tecnologia apaixonado por resolver problemas com código e dados. Atuo como desenvolvedor Full-Stack, com foco em front-end (HTML, CSS, JavaScript) e sólida experiência em back-end com Java, Spring Boot, Maven, MySQL e SQL Server. Entrego aplicações completas, escaláveis e centradas na experiência do usuário.  
-          
-          Além do desenvolvimento de sistemas, tenho forte atuação em análise exploratória de dados e indicadores de desempenho (KPI's), utilizando ferramentas como Excel, SQL, Python e Power BI. Transformo dados em insights estratégicos por meio de dashboards e relatórios claros e objetivos.  
-          
+     <section id="about" className="px-6 py-20 bg-zinc-950/80 backdrop-blur">
+  <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
+    
+    {/* FOTO */}
+    <div className="relative">
+      <img
+        src="C:\Users\gvito\OneDrive\Documentos\repositorios\new_project\portfolio\public\imagem_projeto.png"
+        alt="Foto ilustrativa desenvolvedor"
+        className="w-48 h-48 md:w-64 md:h-64 rounded-2xl object-cover shadow-xl border border-zinc-800"
+      />
+
+      {/* efeito glow */}
+      <div className="absolute inset-0 rounded-2xl bg-blue-500/10 blur-2xl -z-10"></div>
+    </div>
+
+    {/* TEXTO */}
+    <div className="text-center md:text-left max-w-xl">
+      <h2 className="text-3xl font-bold mb-6">Sobre mim</h2>
+
+      <div className="text-gray-400 space-y-4 leading-relaxed">
+        <p>
+          Sou um profissional da tecnologia apaixonado por resolver problemas com código e dados.
+        </p>
+
+        <p>
+          Atuo como desenvolvedor Full-Stack, com foco em front-end (HTML, CSS, JavaScript) e sólida experiência em back-end com Java, Spring Boot, Maven, MySQL e SQL Server.
+        </p>
+
+        <p>
+          Entrego aplicações completas, escaláveis e centradas na experiência do usuário.
+        </p>
+
+        <p>
+          Além do desenvolvimento de sistemas, tenho forte atuação em análise exploratória de dados e indicadores de desempenho (KPI's), utilizando ferramentas como Excel, SQL, Python e Power BI.
+        </p>
+
+        <p>
+          Transformo dados em insights estratégicos por meio de dashboards e relatórios claros e objetivos.
+        </p>
+
+        <p>
           Tenho um perfil analítico, comprometido com resultados e acostumado a trabalhar em ambientes ágeis e orientados a performance.
         </p>
-      </section>
+      </div>
+    </div>
+
+  </div>
+</section>
 
       {/* ADS */}
       <section className="px-6 py-20">
