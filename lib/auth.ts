@@ -9,13 +9,5 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  callbacks: {
-    async signIn({ user }) {
-      // 🔥 ALTERAR PARA SEU EMAIL
-      if (user.email === "g.vitor.g@gmail.com") {
-        return true;
-      }
-      return false;
-    },
-  },
+  secret: process.env.NEXTAUTH_SECRET,
 };
